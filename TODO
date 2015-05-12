@@ -1,0 +1,6 @@
+use pep8, pylint
+use Pandoc to generate README.rst
+use virtualenv[wrapper]
+tox
+setuptools arguments
+

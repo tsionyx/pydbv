@@ -1,0 +1,30 @@
+<
+<TABLE CELLSPACING="0" CELLPADDING="1" BORDER="0" CELLBORDER="1" ALIGN="LEFT">
+    <TR>
+        <TD {% if show_type -%} COLSPAN="2" {% endif %}><FONT POINT-SIZE="14">
+            {{- title -}}
+            </FONT></TD>
+    </TR>
+
+    {%- macro column_name(column) -%}
+        +  {{ column.name -}}
+    {%- endmacro -%}
+
+    {%- macro column_type(column) -%}
+        {{ column.type }}
+    {%- endmacro %}
+
+    {% for column in columns %}
+    <TR>
+        <TD PORT="{{- column.name -}}" ALIGN="LEFT"><FONT POINT-SIZE="12">
+            {{- column_name(column) -}}
+        </FONT></TD>
+        {% if show_type %}
+        <TD PORT="{{- column.name -}}_type" ALIGN="RIGHT"><FONT POINT-SIZE="12">
+            {{- column_type(column) -}}
+        </FONT></TD>
+        {% endif %}
+    </TR>
+    {% endfor %}
+</TABLE>
+>
