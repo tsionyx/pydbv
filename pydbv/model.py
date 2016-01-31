@@ -1,15 +1,19 @@
 #!/usr/bin/env python
 
+'''
+Gets the visual representation of database schema (data model)
+'''
+
 import os
 import sys
 
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
+# from sqlalchemy.ext.automap import automap_base
+# from sqlalchemy.inspection import inspect
+# from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-from sqlalchemy.inspection import inspect
 from sqlalchemy.schema import MetaData
 import pygraphviz as pgv
-from jinja2 import Environment, Template, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader
 
 
 # Capture our current directory
@@ -20,6 +24,10 @@ except NameError:
 
 
 def main(sqlalchemy_connection, show_type=False):
+    '''
+    The main function used to generate database schema
+    description in the dot language
+    '''
     engine = create_engine(sqlalchemy_connection)
 
     meta = MetaData()
@@ -31,12 +39,12 @@ def main(sqlalchemy_connection, show_type=False):
         lstrip_blocks=True)
     node_template = env.get_template('node-template.html')
 
-    G=pgv.AGraph(strict=False,
-        directed=True,
-        name=engine.url.database,
-        graph_type='digraph',
-        compound='true',
-        rankdir='RL')
+    G = pgv.AGraph(strict=False,
+                   directed=True,
+                   name=engine.url.database,
+                   graph_type='digraph',
+                   compound='true',
+                   rankdir='RL')
     tables = meta.tables.values()
     #tables = engine.table_names()
 
@@ -63,9 +71,12 @@ def main(sqlalchemy_connection, show_type=False):
                 table.name,
                 fk.column.table.name,
                 tailport="{0}:w".format(fk.parent.name),
-                headport="{0}:e".format(fk.column.name + ('_type' if show_type else '')),
-                #headlabel="+ %s"%fk.column.name, taillabel='+ %s'%fk.parent.name,
-                # arrowhead='odottee' if fk.parent.nullable else 'teetee', dir='both',
+                headport="{0}:e".format(fk.column.name +
+                                        ('_type' if show_type else '')),
+                # headlabel="+ %s"%fk.column.name,
+                # taillabel='+ %s'%fk.parent.name,
+                # arrowhead='odottee' if fk.parent.nullable else 'teetee',
+                # dir='both',
                 arrowhead='none', dir='back',
                 arrowtail='teeodot' if uniq_child else 'crowodot'
                 #samehead=fk.column.name, sametail=fk.parent.name,
