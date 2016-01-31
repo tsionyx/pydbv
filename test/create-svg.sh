@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
+
+# before you run the test, do
+# 'sudo apt-get install sqlite3 graphviz'
+
 DEMO_DIR=/tmp/demo
 rm -rf $DEMO_DIR && mkdir $DEMO_DIR
-i=1
-# run from root directory of the project
-for sql in $(find downloads/*.sql); do
-    echo $i.$sql
-    sqlite3 $DEMO_DIR/$i.db3 < <(echo "BEGIN TRANSACTION;"; cat $sql ; echo "END TRANSACTION;")> /dev/null
+
+declare -A SQLITE_SOURCES
+SQLITE_SOURCES['north']="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/northwindextended/Northwind.Sqlite3.sql"
+SQLITE_SOURCES['chinook']="https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql"
+
+
+for i in "${!SQLITE_SOURCES[@]}"; do
+	sql="${SQLITE_SOURCES[$i]}"
+    echo $i
+    # remove unicode and other marks from downloaded source
+    # insert transaction mechanics
+    cat <(echo "BEGIN TRANSACTION;"; curl -s $sql | sed '1s/^\xEF\xBB\xBF//' ; echo -e "\nEND TRANSACTION;") > $DEMO_DIR/$i.sql
+    # make the database
+    sqlite3 $DEMO_DIR/$i.db3 <$DEMO_DIR/$i.sql > /dev/null
+    # and finally get the svg from it
     python pydbv/model.py sqlite:///$DEMO_DIR/$i.db3 | tee $DEMO_DIR/$i.gv | dot -Kdot -Tsvg > $DEMO_DIR/$i.svg
-    ((i++))
 done

@@ -38,7 +38,8 @@ class Tox(TestCommand):
         sys.exit(tox.cmdline(self.test_args))
 
 
-# sudo apt-get install virtalenv pandoc pkg-config graphviz-dev
+# to install:
+# sudo apt-get install python-dev virtualenvwrapper pandoc pkg-config graphviz-dev
 setup(name='pydbv',
       version=VERSION,
       description='Python database visualizer tools',
