@@ -14,10 +14,6 @@ VERSION = '0.0.1'
 def read_md(f):
     return open(f, 'r').read()
 
-# to install:
-# sudo apt-get install python-dev virtualenvwrapper pkg-config graphviz-dev
-# sudo yum install python-devel python-virtualenvwrapper pkgconfig graphviz-devel
-
 
 setup(name='pydbv',
       version=VERSION,
